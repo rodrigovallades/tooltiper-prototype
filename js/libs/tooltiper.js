@@ -25,14 +25,14 @@
             tt.innerText = this.message = message;
             this.tempTooltip = tt;
             document.body.appendChild(tt);
-            debugMessage('[tooltip created]\n' + tt.outerHTML);
+            logMessage('[tooltip created]\n' + tt.outerHTML);
             return tt;
         },
         remove: function() {            
             tooltip.tempTooltip.remove();
             tooltip.message = this.message = '';
             this.tempTooltip = '';
-            debugMessage('[tooltip removed]');
+            logMessage('[tooltip removed]');
         }
     };
 
@@ -51,7 +51,7 @@
         tooltipHandler.addEventListener('mouseenter', function(e) {
             var message = this.getAttribute('data-message');
             if (!message) {                
-                debugMessage('"data-message" attribute required!', true);                
+                logMessage('"data-message" attribute required!', true);                
             }
             tooltip.create(message);            
         });
@@ -73,20 +73,21 @@
             tooltip.tempTooltip.style.left = tooltip.pageX + 'px';            
             if (!interval) {
                 interval = setInterval(function() {
-                    debugMessage('[hovering]');
+                    logMessage('[hovering]');
                     clearTimeout(interval);
                     interval = null;
                 }, 200);       
             }     
         });
     });
+}(window));
 
-
-    debug = document.querySelector('.debug tbody');
+(function(global) {
+    var debug = document.querySelector('.debug tbody');
     // logs message to the screen and console
-    function debugMessage(message, throwError) {     
+    function logMessage(message, throwError) {     
         debugMsg = document.createElement('tr');
-        debugMsgTD = document.createElement('td');
+        debugMsgTD = document.createElement('td');  
         debugMsgTD.innerText = message;
         debugMsg.appendChild(debugMsgTD);
         debug.insertBefore(debugMsg, debug.childNodes[0]);
@@ -96,5 +97,6 @@
             console.log(message);
         }   
     }
-
+    // Exposing the function to the global object ('window' passed in the IIFE)
+    global.logMessage = logMessage;
 }(window));
